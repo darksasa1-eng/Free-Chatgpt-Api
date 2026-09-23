@@ -37,10 +37,16 @@ function rateHeaders(info) {
 
 const faviconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#e8e8e8" d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
 
-function landing() {
+function landing(input) {
+  if (input && input.query && input.query.get("debug") === "1") {
+    return ok({
+      resolved_path: input.path,
+      raw: input.raw || null
+    });
+  }
   return {
     status: 200,
-    headers: Object.assign({ "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" }, CORS),
+    headers: Object.assign({ "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=0, must-revalidate" }, CORS),
     body: renderPage()
   };
 }
