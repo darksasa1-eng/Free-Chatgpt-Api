@@ -35,7 +35,7 @@ function rateHeaders(info) {
   };
 }
 
-const faviconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#22d3ee" d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+const faviconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#e8e8e8" d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
 
 function landing() {
   return {
@@ -71,7 +71,19 @@ const ROUTES = {
 export async function handleRequest(input) {
   const method = String(input.method || "GET").toUpperCase();
   let path = String(input.path || "/").split("?")[0];
+  try {
+    path = decodeURIComponent(path);
+  } catch (err) {}
   while (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
+  if (path === "/api/index.js") {
+    path = "/";
+  } else if (path.startsWith("/api/index.js/")) {
+    path = path.slice("/api/index.js".length) || "/";
+  } else if (path === "/api" || path === "/api/") {
+    path = "/";
+  } else if (path.startsWith("/api/")) {
+    path = path.slice(4) || "/";
+  }
   const query = input.query instanceof URLSearchParams ? input.query : new URLSearchParams();
   if (method === "OPTIONS") {
     return { status: 204, headers: Object.assign({}, CORS), body: "" };

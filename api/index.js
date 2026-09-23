@@ -1,8 +1,24 @@
 import { handleRequest } from "../src/core.js";
 
+function normalizePath(pathname) {
+  try {
+    pathname = decodeURIComponent(pathname);
+  } catch (err) {}
+  if (pathname.startsWith("/api/index.js/")) {
+    pathname = pathname.slice("/api/index.js".length);
+  } else if (pathname === "/api/index.js" || pathname === "/api" || pathname === "/api/") {
+    pathname = "/";
+  }
+  if (pathname.length > 1) {
+    pathname = pathname.replace(/\/+$/, "");
+    if (!pathname) pathname = "/";
+  }
+  return pathname;
+}
+
 export default async function handler(req, res) {
   try {
-    const url = new URL(req.url, "http://localhost");
+    const url = new URL(req.url, "https://internal");
     let body = null;
     if (req.method !== "GET" && req.method !== "HEAD" && req.method !== "OPTIONS") {
       let raw = "";
@@ -16,7 +32,7 @@ export default async function handler(req, res) {
     const forwarded = req.headers["x-forwarded-for"];
     const out = await handleRequest({
       method: req.method,
-      path: url.pathname,
+      path: normalizePath(url.pathname),
       query: url.searchParams,
       body,
       env: process.env,

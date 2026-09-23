@@ -84,7 +84,7 @@ async function askText(messages, model, env, temperature) {
   url.searchParams.set("model", payload.model);
   url.searchParams.set("referrer", REFERRER);
   if (system) url.searchParams.set("system", system.slice(0, 2000));
-  const res = await fetch(url.toString(), { signal: AbortSignal.timeout(90000) });
+  const res = await fetch(url.toString(), { signal: AbortSignal.timeout(8000) });
   if (!res.ok) throw new Error("upstream_unavailable");
   const text = (await res.text()).trim();
   if (!text) throw new Error("upstream_unavailable");
@@ -188,7 +188,7 @@ export async function image(input) {
   const url = imageBase(input.env) + "/prompt/" + encodeURIComponent(prompt) + "?width=" + width + "&height=" + height + "&model=" + encodeURIComponent(model) + "&seed=" + seed + "&nologo=true&referrer=" + REFERRER;
   let res;
   try {
-    res = await fetch(url, { signal: AbortSignal.timeout(115000) });
+    res = await fetch(url, { signal: AbortSignal.timeout(55000) });
   } catch (err) {
     return fail(504, "image_timeout", "Image generation took too long. Please try again.");
   }
