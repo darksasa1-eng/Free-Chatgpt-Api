@@ -43,6 +43,7 @@ function landing(input) {
   if (input && input.query && input.query.get("debug") === "1") {
     return ok({
       build_id: BUILD_ID,
+      entry_version: input.entry_version || "missing",
       resolved_path: input.path,
       input_keys: Object.keys(input),
       raw: input.raw || null

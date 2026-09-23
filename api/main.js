@@ -1,5 +1,7 @@
 import { handleRequest } from "../src/core.js";
 
+const ENTRY_VERSION = "entry-v2";
+
 const KNOWN_PATHS = [
   "/", "/favicon.ico", "/favicon.svg", "/status", "/health", "/chat",
   "/v1/chat", "/v1/models", "/v1/image", "/v1/summarize", "/v1/translate", "/v1/code"
