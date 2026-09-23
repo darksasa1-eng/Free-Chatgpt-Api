@@ -1,0 +1,31 @@
+{
+  "name": "chatgpt-free-api",
+  "version": "1.0.0",
+  "description": "A 100% free, OpenAI compatible REST API for chat, images, summaries, translation and code. No API key required.",
+  "main": "api/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "test": "node test.mjs",
+    "deploy": "vercel --prod",
+    "deploy:workers": "wrangler deploy",
+    "dev:workers": "wrangler dev"
+  },
+  "keywords": [
+    "chatgpt",
+    "api",
+    "free",
+    "openai",
+    "compatible",
+    "chat",
+    "ai",
+    "vercel",
+    "cloudflare",
+    "workers"
+  ],
+  "author": "Sasa Dev",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
