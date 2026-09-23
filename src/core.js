@@ -1,6 +1,6 @@
 import { chat, listModels, image, summarize, translate, code, status, health, debugRoute } from "./handlers.js";
 import { renderPage } from "./page.js";
-import { CORS, fail } from "./shared.js";
+import { CORS, fail, ok } from "./shared.js";
 
 const RATE_LIMIT = 60;
 const RATE_WINDOW = 60000;
