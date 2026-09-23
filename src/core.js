@@ -1,4 +1,4 @@
-import { chat, listModels, image, summarize, translate, code, status, health } from "./handlers.js";
+import { chat, listModels, image, summarize, translate, code, status, health, debugRoute } from "./handlers.js";
 import { renderPage } from "./page.js";
 import { CORS, fail } from "./shared.js";
 

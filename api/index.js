@@ -54,13 +54,19 @@ export default async function handler(req, res) {
       }
     }
     const forwarded = req.headers["x-forwarded-for"];
+    const rawHeaders = {};
+    for (const key of Object.keys(req.headers)) {
+      const value = req.headers[key];
+      rawHeaders[key] = typeof value === "string" ? value.slice(0, 120) : String(value).slice(0, 120);
+    }
     const out = await handleRequest({
       method: req.method,
       path: resolvePath(req.headers, url),
       query: url.searchParams,
       body,
       env: process.env,
-      ip: typeof forwarded === "string" ? forwarded.split(",")[0].trim() : ""
+      ip: typeof forwarded === "string" ? forwarded.split(",")[0].trim() : "",
+      raw: { url: req.url, headers: rawHeaders }
     });
     res.statusCode = out.status;
     res.setHeader("x-debug-path", url.pathname + "|" + String(req.headers["x-matched-path"]) + "|" + String(req.headers["x-forwarded-path"]));

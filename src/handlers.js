@@ -304,3 +304,10 @@ export function health() {
     timestamp: new Date().toISOString()
   });
 }
+
+export function debugRoute(input) {
+  return ok({
+    resolved_path: input.path,
+    raw: input.raw || null
+  });
+}
