@@ -113,7 +113,7 @@ export async function handleRequest(input) {
       return res;
     }
   }
-  const out = await route.handler({ method, path, query, body: input.body === undefined ? null : input.body, env: input.env || {}, ip: input.ip || "" });
+  const out = await route.handler({ method, path, query, body: input.body === undefined ? null : input.body, env: input.env || {}, ip: input.ip || "", raw: input.raw || null });
   if (rateInfo) Object.assign(out.headers, rateHeaders(rateInfo));
   return out;
 }
