@@ -101,7 +101,7 @@ export async function handleRequest(input) {
   }
   const route = ROUTES[path];
   if (!route) {
-    return fail(404, "not_found", "This route does not exist. Open /status for the full endpoint catalogue.");
+    return fail(404, "not_found", "This route does not exist. Received path: " + path + ". Open /status for the full endpoint catalogue.");
   }
   if (!route.methods.includes(method)) {
     const res = fail(405, "method_not_allowed", "Use " + route.methods.join(" or ") + " for " + path + ".");
