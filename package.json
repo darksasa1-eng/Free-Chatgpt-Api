@@ -2,7 +2,7 @@
   "name": "chatgpt-free-api",
   "version": "1.0.0",
   "description": "A 100% free, OpenAI compatible REST API for chat, images, summaries, translation and code. No API key required.",
-  "main": "api/index.js",
+  "main": "api/main.js",
   "type": "module",
   "scripts": {
     "dev": "node server.js",
