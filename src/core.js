@@ -37,10 +37,14 @@ function rateHeaders(info) {
 
 const faviconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#e8e8e8" d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
 
+const BUILD_ID = "b" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
 function landing(input) {
   if (input && input.query && input.query.get("debug") === "1") {
     return ok({
+      build_id: BUILD_ID,
       resolved_path: input.path,
+      input_keys: Object.keys(input),
       raw: input.raw || null
     });
   }
