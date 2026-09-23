@@ -1,5 +1,10 @@
 import { handleRequest } from "../src/core.js";
 
+const KNOWN_PATHS = [
+  "/", "/favicon.ico", "/favicon.svg", "/status", "/health", "/chat",
+  "/v1/chat", "/v1/models", "/v1/image", "/v1/summarize", "/v1/translate", "/v1/code"
+];
+
 function normalizePath(pathname) {
   try {
     pathname = decodeURIComponent(pathname);
@@ -14,6 +19,24 @@ function normalizePath(pathname) {
     if (!pathname) pathname = "/";
   }
   return pathname;
+}
+
+function looksLikeRoute(path) {
+  return KNOWN_PATHS.indexOf(path) !== -1 || path.startsWith("/v1/");
+}
+
+function resolvePath(headers, url) {
+  const candidates = [];
+  const forwardedPath = headers["x-forwarded-path"];
+  const matchedPath = headers["x-matched-path"];
+  if (typeof forwardedPath === "string" && forwardedPath) candidates.push(forwardedPath);
+  if (typeof matchedPath === "string" && matchedPath) candidates.push(matchedPath);
+  candidates.push(url.pathname);
+  const normalized = candidates.map(normalizePath);
+  for (const path of normalized) {
+    if (looksLikeRoute(path)) return path;
+  }
+  return normalized[normalized.length - 1];
 }
 
 export default async function handler(req, res) {
@@ -32,13 +55,14 @@ export default async function handler(req, res) {
     const forwarded = req.headers["x-forwarded-for"];
     const out = await handleRequest({
       method: req.method,
-      path: normalizePath(url.pathname),
+      path: resolvePath(req.headers, url),
       query: url.searchParams,
       body,
       env: process.env,
       ip: typeof forwarded === "string" ? forwarded.split(",")[0].trim() : ""
     });
     res.statusCode = out.status;
+    res.setHeader("x-debug-path", url.pathname + "|" + String(req.headers["x-matched-path"]) + "|" + String(req.headers["x-forwarded-path"]));
     for (const key of Object.keys(out.headers)) res.setHeader(key, out.headers[key]);
     res.end(out.body);
   } catch (err) {
