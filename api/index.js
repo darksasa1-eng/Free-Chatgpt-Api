@@ -26,17 +26,18 @@ function looksLikeRoute(path) {
 }
 
 function resolvePath(headers, url) {
-  const candidates = [];
+  const primary = normalizePath(url.pathname);
+  if (primary !== "/" && looksLikeRoute(primary)) return primary;
   const forwardedPath = headers["x-forwarded-path"];
   const matchedPath = headers["x-matched-path"];
-  if (typeof forwardedPath === "string" && forwardedPath) candidates.push(forwardedPath);
-  if (typeof matchedPath === "string" && matchedPath) candidates.push(matchedPath);
-  candidates.push(url.pathname);
-  const normalized = candidates.map(normalizePath);
-  for (const path of normalized) {
-    if (looksLikeRoute(path)) return path;
+  const candidates = [];
+  if (typeof forwardedPath === "string" && forwardedPath) candidates.push(normalizePath(forwardedPath));
+  if (typeof matchedPath === "string" && matchedPath) candidates.push(normalizePath(matchedPath));
+  for (const path of candidates) {
+    if (path !== "/" && looksLikeRoute(path)) return path;
   }
-  return normalized[normalized.length - 1];
+  if (primary !== "/") return primary;
+  return "/";
 }
 
 export default async function handler(req, res) {
