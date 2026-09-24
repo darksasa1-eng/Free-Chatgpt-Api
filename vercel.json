@@ -1,22 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/**/*.js": {
+    "api/router.js": {
       "maxDuration": 60
     }
   },
   "rewrites": [
-    { "source": "/(v1/chat)", "destination": "/api/chat?route=$1" },
-    { "source": "/(chat)", "destination": "/api/chat?route=$1" },
-    { "source": "/(v1/models)", "destination": "/api/models?route=$1" },
-    { "source": "/(v1/image)", "destination": "/api/image?route=$1" },
-    { "source": "/(v1/summarize)", "destination": "/api/summarize?route=$1" },
-    { "source": "/(v1/translate)", "destination": "/api/translate?route=$1" },
-    { "source": "/(v1/code)", "destination": "/api/code?route=$1" },
-    { "source": "/(status)", "destination": "/api/status?route=$1" },
-    { "source": "/(health)", "destination": "/api/health?route=$1" },
-    { "source": "/(favicon.ico)", "destination": "/api/favicon?route=$1" },
-    { "source": "/(favicon.svg)", "destination": "/api/favicon?route=$1" },
-    { "source": "/(.*)", "destination": "/api/main?route=$1" }
+    { "source": "/(.*)", "destination": "/api/router?route=$1" }
   ]
 }

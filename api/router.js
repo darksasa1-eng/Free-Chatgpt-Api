@@ -8,7 +8,7 @@ function cleanRoute(value) {
   if (!value.startsWith("/")) value = "/" + value;
   while (value.length > 1 && value.endsWith("/")) value = value.slice(0, -1);
   if (value === "/index" || value === "/index.js" || value === "/api/index" || value === "/api/index.js") return "/";
-  if (value === "/main" || value === "/main.js" || value === "/api/main" || value === "/api/main.js") return "";
+  if (value === "/router" || value === "/router.js" || value === "/api/router" || value === "/api/router.js") return "";
   return value;
 }
 
