@@ -6,18 +6,17 @@
     }
   },
   "rewrites": [
-    { "source": "/", "destination": "/api/index" },
-    { "source": "/v1/chat", "destination": "/api/chat" },
-    { "source": "/chat", "destination": "/api/chat" },
-    { "source": "/v1/models", "destination": "/api/models" },
-    { "source": "/v1/image", "destination": "/api/image" },
-    { "source": "/v1/summarize", "destination": "/api/summarize" },
-    { "source": "/v1/translate", "destination": "/api/translate" },
-    { "source": "/v1/code", "destination": "/api/code" },
-    { "source": "/status", "destination": "/api/status" },
-    { "source": "/health", "destination": "/api/health" },
-    { "source": "/favicon.ico", "destination": "/api/favicon" },
-    { "source": "/favicon.svg", "destination": "/api/favicon" },
-    { "source": "/(.*)", "destination": "/api/main" }
+    { "source": "/(v1/chat)", "destination": "/api/chat?route=$1" },
+    { "source": "/(chat)", "destination": "/api/chat?route=$1" },
+    { "source": "/(v1/models)", "destination": "/api/models?route=$1" },
+    { "source": "/(v1/image)", "destination": "/api/image?route=$1" },
+    { "source": "/(v1/summarize)", "destination": "/api/summarize?route=$1" },
+    { "source": "/(v1/translate)", "destination": "/api/translate?route=$1" },
+    { "source": "/(v1/code)", "destination": "/api/code?route=$1" },
+    { "source": "/(status)", "destination": "/api/status?route=$1" },
+    { "source": "/(health)", "destination": "/api/health?route=$1" },
+    { "source": "/(favicon.ico)", "destination": "/api/favicon?route=$1" },
+    { "source": "/(favicon.svg)", "destination": "/api/favicon?route=$1" },
+    { "source": "/(.*)", "destination": "/api/main?route=$1" }
   ]
 }

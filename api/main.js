@@ -1,14 +1,15 @@
 import { handleRequest } from "../src/core.js";
 
-function normalizePath(pathname) {
+function cleanRoute(value) {
+  if (typeof value !== "string") return "";
   try {
-    pathname = decodeURIComponent(pathname);
+    value = decodeURIComponent(value);
   } catch (err) {}
-  if (pathname.length > 1) {
-    pathname = pathname.replace(/\/+$/, "");
-    if (!pathname) pathname = "/";
-  }
-  return pathname;
+  if (!value.startsWith("/")) value = "/" + value;
+  while (value.length > 1 && value.endsWith("/")) value = value.slice(0, -1);
+  if (value === "/index" || value === "/index.js" || value === "/api/index" || value === "/api/index.js") return "/";
+  if (value === "/main" || value === "/main.js" || value === "/api/main" || value === "/api/main.js") return "";
+  return value;
 }
 
 export default async function handler(req, res) {
@@ -24,10 +25,14 @@ export default async function handler(req, res) {
         body = raw;
       }
     }
+    const routeParam = url.searchParams.get("route") || "";
+    url.searchParams.delete("route");
+    let path = cleanRoute(routeParam);
+    if (!path) path = "/";
     const forwarded = req.headers["x-forwarded-for"];
     const out = await handleRequest({
       method: req.method,
-      path: normalizePath(url.pathname),
+      path,
       query: url.searchParams,
       body,
       env: process.env,
@@ -35,16 +40,6 @@ export default async function handler(req, res) {
     });
     res.statusCode = out.status;
     for (const key of Object.keys(out.headers)) res.setHeader(key, out.headers[key]);
-    if (out.status === 404) {
-      const flatHeaders = {};
-      for (const key of Object.keys(req.headers)) {
-        const value = req.headers[key];
-        flatHeaders[key] = typeof value === "string" ? value.slice(0, 140) : String(value).slice(0, 140);
-      }
-      res.setHeader("content-type", "application/json; charset=utf-8");
-      res.end(JSON.stringify({ seen_url: req.url, method: req.method, headers: flatHeaders }, null, 2));
-      return;
-    }
     res.end(out.body);
   } catch (err) {
     res.statusCode = 500;

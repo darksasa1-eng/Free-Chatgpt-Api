@@ -4,6 +4,7 @@ export function serveVercel(fixedPath) {
   return async function handler(req, res) {
     try {
       const url = new URL(req.url, "https://internal");
+      url.searchParams.delete("route");
       let body = null;
       if (req.method !== "GET" && req.method !== "HEAD" && req.method !== "OPTIONS") {
         let raw = "";
