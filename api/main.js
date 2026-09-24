@@ -35,6 +35,16 @@ export default async function handler(req, res) {
     });
     res.statusCode = out.status;
     for (const key of Object.keys(out.headers)) res.setHeader(key, out.headers[key]);
+    if (out.status === 404 && url.searchParams.get("diag") === "1") {
+      const flatHeaders = {};
+      for (const key of Object.keys(req.headers)) {
+        const value = req.headers[key];
+        flatHeaders[key] = typeof value === "string" ? value.slice(0, 140) : String(value).slice(0, 140);
+      }
+      res.setHeader("content-type", "application/json; charset=utf-8");
+      res.end(JSON.stringify({ seen_url: req.url, method: req.method, headers: flatHeaders }, null, 2));
+      return;
+    }
     res.end(out.body);
   } catch (err) {
     res.statusCode = 500;
