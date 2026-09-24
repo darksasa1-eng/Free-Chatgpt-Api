@@ -1,15 +1,23 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/main.js": {
-      "maxDuration": 60,
-      "memory": 1024
+    "api/**/*.js": {
+      "maxDuration": 60
     }
   },
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/main.js"
-    }
+    { "source": "/", "destination": "/api/index.js" },
+    { "source": "/v1/chat", "destination": "/api/chat.js" },
+    { "source": "/chat", "destination": "/api/chat.js" },
+    { "source": "/v1/models", "destination": "/api/models.js" },
+    { "source": "/v1/image", "destination": "/api/image.js" },
+    { "source": "/v1/summarize", "destination": "/api/summarize.js" },
+    { "source": "/v1/translate", "destination": "/api/translate.js" },
+    { "source": "/v1/code", "destination": "/api/code.js" },
+    { "source": "/status", "destination": "/api/status.js" },
+    { "source": "/health", "destination": "/api/health.js" },
+    { "source": "/favicon.ico", "destination": "/api/favicon.js" },
+    { "source": "/favicon.svg", "destination": "/api/favicon.js" },
+    { "source": "/(.*)", "destination": "/api/main.js" }
   ]
 }

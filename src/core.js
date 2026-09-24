@@ -1,6 +1,6 @@
-import { chat, listModels, image, summarize, translate, code, status, health, debugRoute } from "./handlers.js";
+import { chat, listModels, image, summarize, translate, code, status, health } from "./handlers.js";
 import { renderPage } from "./page.js";
-import { CORS, fail, ok } from "./shared.js";
+import { CORS, fail } from "./shared.js";
 
 const RATE_LIMIT = 60;
 const RATE_WINDOW = 60000;
@@ -37,18 +37,7 @@ function rateHeaders(info) {
 
 const faviconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#e8e8e8" d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
 
-const BUILD_ID = "b" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-
-function landing(input) {
-  if (input && input.query && input.query.get("debug") === "1") {
-    return ok({
-      build_id: BUILD_ID,
-      entry_version: input.entry_version || "missing",
-      resolved_path: input.path,
-      input_keys: Object.keys(input),
-      raw: input.raw || null
-    });
-  }
+function landing() {
   return {
     status: 200,
     headers: Object.assign({ "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=0, must-revalidate" }, CORS),
@@ -80,25 +69,24 @@ const ROUTES = {
 };
 
 export async function handleRequest(input) {
-  const method = String(input.method || "GET").toUpperCase();
+  let method = String(input.method || "GET").toUpperCase();
   let path = String(input.path || "/").split("?")[0];
   try {
     path = decodeURIComponent(path);
   } catch (err) {}
   while (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
-  if (path === "/api/index.js") {
+  if (path === "/api/index.js" || path === "/index.js") {
     path = "/";
-  } else if (path.startsWith("/api/index.js/")) {
-    path = path.slice("/api/index.js".length) || "/";
-  } else if (path === "/api" || path === "/api/") {
-    path = "/";
-  } else if (path.startsWith("/api/")) {
+  } else if (path === "/api/main.js" || path === "/main.js") {
+    path = "/404-info";
+  } else if (path.startsWith("/api/") && !ROUTES[path]) {
     path = path.slice(4) || "/";
   }
   const query = input.query instanceof URLSearchParams ? input.query : new URLSearchParams();
   if (method === "OPTIONS") {
     return { status: 204, headers: Object.assign({}, CORS), body: "" };
   }
+  if (method === "HEAD") method = "GET";
   const route = ROUTES[path];
   if (!route) {
     return fail(404, "not_found", "This route does not exist. Received path: " + path + ". Open /status for the full endpoint catalogue.");
@@ -118,7 +106,7 @@ export async function handleRequest(input) {
       return res;
     }
   }
-  const out = await route.handler({ method, path, query, body: input.body === undefined ? null : input.body, env: input.env || {}, ip: input.ip || "", raw: input.raw || null, entry_version: input.entry_version || "missing" });
+  const out = await route.handler({ method, path, query, body: input.body === undefined ? null : input.body, env: input.env || {}, ip: input.ip || "" });
   if (rateInfo) Object.assign(out.headers, rateHeaders(rateInfo));
   return out;
 }
