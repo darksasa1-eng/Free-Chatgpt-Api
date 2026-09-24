@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     });
     res.statusCode = out.status;
     for (const key of Object.keys(out.headers)) res.setHeader(key, out.headers[key]);
-    if (out.status === 404 && url.searchParams.get("diag") === "1") {
+    if (out.status === 404) {
       const flatHeaders = {};
       for (const key of Object.keys(req.headers)) {
         const value = req.headers[key];
